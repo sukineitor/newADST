@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AureaNet — Ingresos Pasivos, Adsterra & Ayuda Mutua Comunitaria</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Three.js CDN for 3D Globe & Coin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-obsidian: #0B0B0C;
+      --bg-charcoal: #121214;
+      --cream-light: #FAF4E8;
+      --cream-warm: #F5E6C8;
+      --cream-deep: #EFE3C3;
+      --accent-gold: #D4AF37;
+      --accent-emerald: #10B981;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-obsidian);
+      color: var(--cream-light);
+      overflow-x: hidden;
+    }
+
+    .font-display { 
+      font-family: 'Instrument Serif', Georgia, serif; 
+    }
+
+    .font-mono-num { 
+      font-family: 'JetBrains Mono', monospace; 
+      font-variant-numeric: tabular-nums; 
+    }
+
+    /* iOS Glassmorphism styling */
+    .ios-glass {
+      background: rgba(18, 18, 20, 0.82);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+    }
+
+    .ios-glass-cream {
+      background: rgba(245, 230, 200, 0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+
+    .ios-modal-backdrop {
+      background: rgba(6, 6, 8, 0.82);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+    }
+
+    /* Interactive tilt card */
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease;
+      will-change: transform;
+    }
+
+    .tilt-card:hover {
+      box-shadow: 0 20px 40px -15px rgba(212, 175, 55, 0.15);
+    }
+
+    /* Custom iOS Slider */
+    input[type="range"].ios-slider {
+      -webkit-appearance: none; 
+      appearance: none;
+      height: 6px; 
+      border-radius: 999px; 
+      background: rgba(245, 230, 200, 0.2); 
+      outline: none;
+    }
+
+    input[type="range"].ios-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; 
+      appearance: none;
+      width: 22px; 
+      height: 22px; 
+      border-radius: 50%;
+      background: #FAF4E8; 
+      border: 3px solid #0B0B0C; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"].ios-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0B0C;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(245, 230, 200, 0.2);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 230, 200, 0.4);
+    }
+
+    /* Pulse glow animation */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    .animate-pulse-glow {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-[#0B0B0C] text-[#FAF4E8] antialiased pb-28 selection:bg-[#F5E6C8] selection:text-[#0B0B0C]">
+
+  <!-- BARRA SUPERIOR ESTILO iOS -->
+  <header class="sticky top-0 z-40 ios-glass border-b border-[#F5E6C8]/12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D4AF37] to-[#F5E6C8] flex items-center justify-center text-[#0B0B0C] font-bold text-base shadow-lg group-hover:scale-105 transition-transform">
+          A
+        </div>
+        <span class="text-2xl font-bold tracking-tight text-[#FAF4E8] font-display">AureaNet</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-[#FAF4E8]/75">
+        <a href="#ingresos" class="hover:text-[#F5E6C8] transition-colors">Ingresos Pasivos</a>
+        <a href="#adsterra" class="hover:text-[#F5E6C8] transition-colors">Adsterra & CPM</a>
+        <a href="#comunidad" class="hover:text-[#F5E6C8] transition-colors">Ayuda Mutua</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#0B0B0C] bg-[#10B981] hover:bg-[#34D399] transition-all shadow-md">
+          <span>Únete a Adsterra</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        </a>
+        <button onclick="openModal('guide')" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#0B0B0C] bg-[#F5E6C8] hover:bg-[#FAF4E8] transition-all shadow-md">
+          Guía Rápida
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-14 space-y-24">
+    
+    <!-- A. HERO SECTION -->
+    <section id="inicio" class="scroll-mt-24 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-7 space-y-6">
+        
+        <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-[#F5E6C8]/80">
+          <span class="px-2.5 py-1 rounded-full bg-[#F5E6C8]/10 border border-[#F5E6C8]/20">iOS Dark & Warm Cream</span>
+          <span>·</span>
+          <span>Monetización Web con IA</span>
+          <span>·</span>
+          <span class="text-[#10B981] font-semibold flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-[#10B981] animate-ping"></span>
+            Red Cooperativa Activa
+          </span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#FAF4E8] leading-[1.08]">
+          Ingresos Pasivos y Monetización Web Impulsada por
+          <span class="font-display italic font-normal text-[#F5E6C8] block mt-1"> Inteligencia Artificial</span>
+        </h1>
+
+        <p class="text-base sm:text-lg text-[#FAF4E8]/80 leading-relaxed max-w-2xl">
+          Crea sitios web útiles en minutos con IA, alójalos totalmente gratis en Netlify o Vercel y monetízalos con Adsterra apalancado por el tráfico recíproco de nuestra comunidad.
+        </p>
+
+        <!-- Tarjeta 3D Interactiva -->
+        <div class="tilt-card rounded-[24px] bg-gradient-to-br from-[#F5E6C8] via-[#FAF4E8] to-[#EFE3C3] text-[#0B0B0C] p-6 sm:p-8 shadow-2xl border border-[#FAF4E8] relative overflow-hidden group">
+          <div class="absolute -right-12 -top-12 w-40 h-40 bg-[#D4AF37]/20 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#0B0B0C]/70 relative z-10">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0B0B0C]/10">
+              <svg class="w-3.5 h-3.5 text-[#0B0B0C]" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3.005 3.005 0 013.75-2.906z"></path></svg>
+              Filosofía Comunitaria
+            </span>
+            <span class="font-mono-num flex items-center gap-1">
+              Flujo en vivo: <strong id="hero-live-visits" class="text-[#0B0B0C] font-bold">1,642</strong> visitas/día
+            </span>
+          </div>
+
+          <blockquote class="mt-4 text-2xl sm:text-3xl font-semibold text-[#0B0B0C] leading-snug font-display italic">
+            “Ayúdanos a ayudarte: la comunidad donde el éxito de uno es el beneficio de todos”
+          </blockquote>
+
+          <div class="mt-6 pt-5 border-t border-[#0B0B0C]/12 flex flex-wrap items-center justify-between gap-4 relative z-10">
+            <div class="inline-flex p-1 rounded-xl bg-[#0B0B0C]/10 border border-[#0B0B0C]/10">
+              <button id="btn-mode-solo" onclick="setHeroMode('solo')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#0B0B0C]/70 transition-all">Solo (1x)</button>
+              <button id="btn-mode-com" onclick="setHeroMode('com')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#0B0B0C] text-[#FAF4E8] shadow transition-all">En Comunidad (10x)</button>
+            </div>
+            <span id="hero-mode-desc" class="text-xs font-semibold text-[#0B0B0C]/85 max-w-xs">
+              Cada visita que realizas retorna multiplicada desde múltiples países miembros.
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button onclick="openModal('guide')" class="px-6 py-3.5 rounded-2xl bg-[#FAF4E8] text-[#0B0B0C] text-sm font-bold hover:bg-[#F5E6C8] transition-all shadow-xl hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+            <span>Abrir Guía de Inicio Rápido</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+          
+          <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-2xl bg-[#10B981] text-[#0B0B0C] text-sm font-bold hover:bg-[#34D399] transition-all shadow-xl hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+            <span>Crear Cuenta en Adsterra</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Escena 3D Three.js -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="relative w-full h-[420px] rounded-[28px] bg-[#121214] border border-[#F5E6C8]/20 overflow-hidden shadow-2xl group">
+          
+          <div class="absolute top-4 inset-x-4 z-20 flex items-center justify-between pointer-events-auto">
+            <div class="inline-flex p-1 rounded-xl bg-[#0B0B0C]/80 border border-[#F5E6C8]/20 backdrop-blur-md">
+              <button id="btn-3d-globe" onclick="switch3D('globe')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#F5E6C8] text-[#0B0B0C] transition-all">Globo 3D</button>
+              <button id="btn-3d-coin" onclick="switch3D('coin')" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-[#FAF4E8]/80 hover:text-white transition-all">Moneda 3D</button>
+            </div>
+            <button onclick="triggerWave()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#D4AF37] text-[#0B0B0C] border border-[#F5E6C8]/30 shadow-lg hover:bg-[#F5E6C8] transition-all active:scale-95">
+              Simular Ola Tráfico ⚡
+            </button>
+          </div>
+
+          <!-- Three.js Canvas Container -->
+          <div id="three-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+          <div class="pointer-events-none absolute bottom-3 inset-x-4 z-20 flex items-center justify-between px-4 py-2.5 rounded-xl bg-[#0B0B0C]/85 border border-[#F5E6C8]/15 text-xs text-[#FAF4E8]/80 backdrop-blur-md">
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#D4AF37]"></span> Tier 1 (USA/EU)
+              <span class="w-2 h-2 rounded-full bg-[#10B981]"></span> Tier 3 (LATAM)
+            </span>
+            <span class="text-[11px] text-[#F5E6C8]/60">Arrastra para girar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B. SECCIÓN INGRESOS PASIVOS Y TIPOS DE INGRESOS -->
+    <section id="ingresos" class="scroll-mt-24 space-y-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-[#F5E6C8]/12">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">Sección 01 · Comparativa & Estrategia</div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-[#FAF4E8] mt-1">Ingresos Pasivos y Aceleración con IA</h2>
+        </div>
+        <div class="inline-flex p-1.5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/15 gap-1">
+          <button id="tab-1" onclick="showTab(1)" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#F5E6C8] text-[#0B0B0C] transition-all">1. Activos vs. Pasivos</button>
+          <button id="tab-2" onclick="showTab(2)" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#FAF4E8]/70 hover:text-white transition-all">2. Monetización Adsterra</button>
+          <button id="tab-3" onclick="showTab(3)" class="px-4 py-2 rounded-xl text-xs font-semibold text-[#FAF4E8]/70 hover:text-white transition-all">3. Flujo con IA</button>
+        </div>
+      </div>
+
+      <!-- Tab 1 Panel -->
+      <div id="panel-1" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="tilt-card rounded-[24px] bg-[#121214] border border-[#F5E6C8]/14 p-7 space-y-4">
+          <div class="inline-block px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-semibold">Modelo Tradicional</div>
+          <h3 class="text-2xl font-semibold text-[#FAF4E8]">Ingreso Activo (Intercambio de Tiempo)</h3>
+          <p class="text-sm text-[#FAF4E8]/75 leading-relaxed">
+            Dependes al 100% de tu presencia física o de tu empleo. Si dejas de trabajar hoy, tus ingresos se detienen inmediatamente. No genera apalancamiento digital ni escala mientras duermes.
+          </p>
+          <ul class="space-y-2 text-xs text-[#FAF4E8]/60 pt-2">
+            <li class="flex items-center gap-2">❌ Techo salarial limitado por horas diarias</li>
+            <li class="flex items-center gap-2">❌ Cero residuales tras entregar el proyecto</li>
+            <li class="flex items-center gap-2">❌ Alto nivel de agotamiento y burnout</li>
+          </ul>
+        </div>
+
+        <div class="tilt-card rounded-[24px] bg-gradient-to-br from-[#F5E6C8] to-[#EFE3C3] text-[#0B0B0C] p-7 space-y-4 shadow-xl">
+          <div class="inline-block px-3 py-1 rounded-full bg-[#0B0B0C]/10 text-[#0B0B0C] text-xs font-bold">Modelo Exponencial 24/7</div>
+          <h3 class="text-2xl font-bold text-[#0B0B0C]">Ingreso Pasivo (Activos Web con IA)</h3>
+          <p class="text-sm text-[#0B0B0C]/85 leading-relaxed">
+            Creas calculadoras, directorios o guías interactivas con IA una sola vez, las alojas gratis en Netlify/Vercel y monetizas cada visita global las 24 horas con Adsterra y la red mutual.
+          </p>
+          <ul class="space-y-2 text-xs font-semibold text-[#0B0B0C]/80 pt-2">
+            <li class="flex items-center gap-2">✔ Ingresos automáticos continuos en USD</li>
+            <li class="flex items-center gap-2">✔ Escalabilidad global sin costos de servidores</li>
+            <li class="flex items-center gap-2">✔ Impulsado por ayuda cruzada de la comunidad</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab 2 Panel -->
+      <div id="panel-2" class="hidden grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-[24px] bg-[#F5E6C8] text-[#0B0B0C] p-6 space-y-3 shadow-xl">
+          <div class="text-xs font-bold uppercase tracking-wider text-[#0B0B0C]/60">01. Publicidad Digital (Adsterra)</div>
+          <h3 class="text-xl font-bold">Paga desde la Primera Visita</h3>
+          <p class="text-xs leading-relaxed text-[#0B0B0C]/85">
+            Aprobación instantánea sin requisito mínimo de tráfico. Cobras por impresiones (CPM) y clics sin obligar al visitante a realizar compras.
+          </p>
+          <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 px-3.5 py-1.5 rounded-lg bg-[#0B0B0C] text-[#FAF4E8] text-xs font-bold hover:bg-[#18181B]">Regístrate con nuestro link →</a>
+        </div>
+
+        <div class="rounded-[24px] bg-[#121214] border border-[#F5E6C8]/14 p-6 space-y-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">02. Marketing de Afiliados</div>
+          <h3 class="text-xl font-semibold">Requiere Cierre de Ventas</h3>
+          <p class="text-xs leading-relaxed text-[#FAF4E8]/75">
+            Cobras una comisión solo si el usuario saca su tarjeta y compra. Funciona muy bien como monetización secundaria dentro de tus webs que ya tienen Adsterra.
+          </p>
+        </div>
+
+        <div class="rounded-[24px] bg-[#121214] border border-[#F5E6C8]/14 p-6 space-y-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#10B981]">03. Contenido en Redes Sociales</div>
+          <h3 class="text-xl font-semibold">Embudo de Tráfico Gratuito</h3>
+          <p class="text-xs leading-relaxed text-[#FAF4E8]/75">
+            Usa TikTok, Reels o foros para redirigir tráfico masivo hacia tus herramientas en Netlify, disparando las impresiones y ganancias de tus banners.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab 3 Panel -->
+      <div id="panel-3" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/14 space-y-2">
+          <div class="text-xs font-mono-num text-[#D4AF37] font-bold">Paso 01</div>
+          <div class="text-sm font-semibold text-[#F5E6C8]">Elegir Nicho de Alto CPM</div>
+          <p class="text-xs text-[#FAF4E8]/70 leading-relaxed">Finanzas, cripto, software, IA, seguros o calculadoras de impuestos bilingües (EE.UU./España).</p>
+        </div>
+        
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/14 space-y-2">
+          <div class="text-xs font-mono-num text-[#D4AF37] font-bold">Paso 02</div>
+          <div class="text-sm font-semibold text-[#F5E6C8]">Generar Código con IA</div>
+          <p class="text-xs text-[#FAF4E8]/70 leading-relaxed">En 5 minutos, la Inteligencia Artificial te programa una SPA completa interactiva en un solo archivo <code class="text-[#F5E6C8]">index.html</code>.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/14 space-y-2">
+          <div class="text-xs font-mono-num text-[#D4AF37] font-bold">Paso 03</div>
+          <div class="text-sm font-semibold text-[#F5E6C8]">Hosting Gratis Netlify</div>
+          <p class="text-xs text-[#FAF4E8]/70 leading-relaxed">Arrastra tu carpeta a Netlify Drop o Vercel para obtener un sitio en vivo con certificado SSL HTTPS a coste $0.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/14 space-y-2">
+          <div class="text-xs font-mono-num text-[#10B981] font-bold">Paso 04</div>
+          <div class="text-sm font-semibold text-[#F5E6C8]">Adsterra + Comunidad</div>
+          <p class="text-xs text-[#FAF4E8]/70 leading-relaxed">Inserta el código del Social Bar de Adsterra y comparte tu URL en el Muro de Ayuda Mutua para recibir visitas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- C. SECCIÓN ADSTERRA & CALCULADORA DE FACTOR GEOGRÁFICO -->
+    <section id="adsterra" class="scroll-mt-24 space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">Sección 02 · Monetización & Factor Geográfico</div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-[#FAF4E8] mt-1">Cómo Funciona Adsterra y Calculadora de CPM</h2>
+        </div>
+        <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#10B981] text-[#0B0B0C] text-xs font-bold hover:bg-[#34D399] transition-all shadow-lg">
+          <span>Crear Cuenta Publisher en Adsterra</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        </a>
+      </div>
+
+      <!-- Tipos de Anuncios Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/15 space-y-2 hover:border-[#D4AF37]/50 transition-all">
+          <div class="text-xs text-[#10B981] font-mono-num font-semibold">CTR 3.8% - 6.2%</div>
+          <h3 class="text-base font-semibold text-[#F5E6C8]">Social Bar (In-Page Push)</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">Notificaciones y widgets flotantes estilo iOS. Altamente efectivo en dispositivos móviles sin bloquear contenido.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/15 space-y-2 hover:border-[#D4AF37]/50 transition-all">
+          <div class="text-xs text-[#D4AF37] font-mono-num font-semibold">Máximo CPM ($10 - $25)</div>
+          <h3 class="text-base font-semibold text-[#F5E6C8]">Popunder</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">Se abre en una pestaña secundaria al hacer clic. Es el formato de mayor pago por cada 1,000 impresiones.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/15 space-y-2 hover:border-[#D4AF37]/50 transition-all">
+          <div class="text-xs text-[#FAF4E8]/60 font-mono-num font-semibold">Integración Orgánica</div>
+          <h3 class="text-base font-semibold text-[#F5E6C8]">Native Banners</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">Bloques de noticias o recomendaciones adaptables al diseño estético de tu herramienta o artículo.</p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#121214] border border-[#F5E6C8]/15 space-y-2 hover:border-[#D4AF37]/50 transition-all">
+          <div class="text-xs text-[#10B981] font-mono-num font-semibold">Smart URL Directa</div>
+          <h3 class="text-base font-semibold text-[#F5E6C8]">Direct Links</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">Enlace inteligente ideal para botones de descarga, acceder a recursos o apoyar proyectos en la comunidad.</p>
+        </div>
+      </div>
+
+      <!-- Calculadora Interactiva CPM -->
+      <div class="rounded-[28px] bg-[#121214] border border-[#F5E6C8]/20 p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-2xl relative overflow-hidden">
+        <div class="lg:col-span-7 space-y-6">
+          <div>
+            <span class="px-2.5 py-1 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] text-xs font-semibold">Simulador de Algoritmo CPM</span>
+            <h3 class="text-2xl font-semibold text-[#F5E6C8] mt-2">Calculadora de Ganancias según el Origen Geográfico</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-[#FAF4E8]/80 mb-2">1. Selecciona el País (Tier Geográfico):</label>
+              <select id="calc-country" onchange="calcCpm()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#18181B] border border-[#F5E6C8]/25 text-xs text-[#FAF4E8] focus:border-[#D4AF37] outline-none">
+                <option value="9.50" data-label="EE.UU. (Tier 1)">Estados Unidos (Tier 1 · CPM CPM ~$9.50)</option>
+                <option value="8.10" data-label="Reino Unido / Alemania (Tier 1)">Reino Unido / Alemania (Tier 1 · CPM ~$8.10)</option>
+                <option value="5.60" data-label="España (Tier 1)" selected>España (Tier 1 · CPM ~$5.60)</option>
+                <option value="2.60" data-label="Chile / Uruguay (Tier 2)">Chile & Uruguay (Tier 2 · CPM ~$2.60)</option>
+                <option value="1.85" data-label="México (Tier 3)">México (Tier 3 · CPM ~$1.85)</option>
+                <option value="1.30" data-label="Colombia / Perú / Arg (Tier 3)">Colombia, Perú & Argentina (Tier 3 · CPM ~$1.30)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#FAF4E8]/80 mb-2">2. Formato Publicitario:</label>
+              <select id="calc-format" onchange="calcCpm()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#18181B] border border-[#F5E6C8]/25 text-xs text-[#FAF4E8] focus:border-[#D4AF37] outline-none">
+                <option value="1.45" selected>Combo Maximizado (Social Bar + Popunder + Native)</option>
+                <option value="1.25">Popunder Directo de Alto Impacto</option>
+                <option value="1.05">Social Bar (In-Page Push)</option>
+                <option value="0.65">Banner Nativo Estándar</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-[#FAF4E8]/80">3. Visitas Diarias Estimadas (2.5 págs vistas/sesión):</span>
+              <strong id="calc-vis-txt" class="font-mono-num text-[#F5E6C8] font-bold">2,000 visitas / día</strong>
+            </div>
+            <input id="calc-vis" type="range" min="100" max="20000" step="100" value="2000" oninput="calcCpm()" class="w-full ios-slider" />
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 rounded-[24px] bg-gradient-to-br from-[#FAF4E8] via-[#F5E6C8] to-[#EFE3C3] text-[#0B0B0C] p-6 sm:p-7 space-y-4 shadow-2xl relative">
+          <div class="flex justify-between items-center text-xs font-bold text-[#0B0B0C]/70">
+            <span>Proyección Mensual Estimada</span>
+            <span id="calc-tier-txt" class="font-mono-num px-2 py-0.5 rounded bg-[#0B0B0C]/10">España (Tier 1)</span>
+          </div>
+
+          <div>
+            <div class="text-4xl sm:text-5xl font-extrabold font-mono-num text-[#0B0B0C]">
+              $<span id="calc-monthly">420.00</span>
+            </div>
+            <div class="text-xs font-semibold text-[#0B0B0C]/70 mt-1">Dólares USD libres por mes</div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-[#0B0B0C]/8 border border-[#0B0B0C]/10 text-xs font-mono-num text-[#0B0B0C]/85 space-y-1">
+            <div class="flex justify-between">
+              <span>Ingreso Diario:</span>
+              <strong class="font-bold">$<span id="calc-daily">14.00</span> USD</strong>
+            </div>
+            <div class="flex justify-between">
+              <span>CPM Efectivo Combinado:</span>
+              <strong class="font-bold">$<span id="calc-eff-cpm">8.12</span> USD</strong>
+            </div>
+          </div>
+
+          <div class="pt-2 space-y-2">
+            <button onclick="openModal('goals')" class="w-full py-3 rounded-xl bg-[#0B0B0C] text-[#FAF4E8] text-xs font-bold hover:bg-[#18181B] transition-all shadow-md">
+              Abrir Calculadora de Metas Financieras →
+            </button>
+            <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="block text-center w-full py-2.5 rounded-xl bg-[#10B981] text-[#0B0B0C] text-xs font-bold hover:bg-[#34D399] transition-all">
+              Comenzar a Monetizar con Adsterra
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- D. SECCIÓN LA RED DE AYUDA MUTUA ("GANAR + GANAR TODOS") -->
+    <section id="comunidad" class="scroll-mt-24 space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-[#F5E6C8]/12">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-[#10B981]">Sección 03 · Ganar + Ganar Todos</div>
+          <h2 class="text-3xl sm:text-4xl font-semibold text-[#FAF4E8] mt-1">La Red de Ayuda Mutua & Reglas Fair-Play</h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-7 rounded-[24px] bg-[#121214] border border-[#F5E6C8]/14 space-y-3">
+          <div class="text-xs font-mono-num text-[#D4AF37] font-bold">01. Hosting Gratis + Tráfico Cruzado</div>
+          <h3 class="text-lg font-semibold text-[#FAF4E8]">Subida a Netlify y Vercel</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">
+            Cada miembro sube sus aplicaciones web creadas con IA y comparte sus enlaces en el Muro Común. La red intercambia visitas orgánicas de calidad entre países.
+          </p>
+        </div>
+
+        <div class="p-7 rounded-[24px] bg-[#121214] border border-[#F5E6C8]/14 space-y-3">
+          <div class="text-xs font-mono-num text-[#D4AF37] font-bold">02. Permanencia Real &gt; 45s</div>
+          <h3 class="text-lg font-semibold text-[#FAF4E8]">Calidad de Sesión Orgánica</h3>
+          <p class="text-xs text-[#FAF4E8]/75 leading-relaxed">
+            Navegamos por las calculadoras de los compañeros, realizamos interacciones genuinas y permitimos que la publicidad cargue naturalmente sin prisas.
+          </p>
+        </div>
+
+        <div class="p-7 rounded-[24px] bg-gradient-to-br from-[#F5E6C8] to-[#EFE3C3] text-[#0B0B0C] space-y-3 shadow-xl">
+          <div class="text-xs font-mono-num font-bold text-[#0B0B0C]/70">03. Normas Anti-Ban & Fair-Play</div>
+          <h3 class="text-lg font-bold">Cero Bots y CTR Orgánico (2% - 4%)</h3>
+          <p class="text-xs text-[#0B0B0C]/85 leading-relaxed">
+            Nunca hacemos clics compulsivos ni utilizamos software automatizado. Preservar la reputación de la comunidad garantiza cobros puntuales en Adsterra para todos.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DOCK FLOTANTE INFERIOR ESTILO iOS -->
+  <div class="fixed bottom-4 inset-x-0 z-40 flex justify-center px-3 pointer-events-none">
+    <div class="pointer-events-auto ios-glass border border-[#F5E6C8]/25 rounded-2xl px-3 py-2 shadow-2xl flex items-center gap-2 overflow-x-auto max-w-full">
+      <a href="#adsterra" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#FAF4E8]/80 hover:text-white whitespace-nowrap">CPM</a>
+      <button onclick="openModal('guide')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#18181B] text-[#F5E6C8] border border-[#F5E6C8]/15 whitespace-nowrap">1. Guía Rápida</button>
+      <button onclick="openModal('goals')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#D4AF37] text-[#0B0B0C] whitespace-nowrap">2. Metas USD</button>
+      <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#10B981] text-[#0B0B0C] whitespace-nowrap flex items-center gap-1">
+        <span>Adsterra</span>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- MODALES FLOTANTES ESTILO iOS SHEET -->
+  <div id="modal-backdrop" onclick="closeModal()" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 ios-modal-backdrop transition-opacity duration-300 opacity-0">
+    <div onclick="event.stopPropagation()" class="w-full max-w-3xl max-h-[88vh] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-[#121214] border border-[#F5E6C8]/25 text-[#FAF4E8] p-6 sm:p-8 shadow-2xl relative">
+
+      <!-- Modal 1: Guía Rápida -->
+      <div id="modal-guide" class="hidden space-y-6">
+        <div class="flex justify-between items-center border-b border-[#F5E6C8]/12 pb-4">
+          <h3 class="text-xl font-semibold text-[#F5E6C8]">Guía de Inicio Rápido: IA + Netlify + Adsterra</h3>
+          <button onclick="closeModal()" class="px-3 py-1 rounded-lg bg-[#18181B] text-xs text-[#FAF4E8]/70 hover:text-white">Cerrar ✕</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-2xl bg-[#18181B] border border-[#F5E6C8]/10 space-y-2">
+            <strong class="text-[#D4AF37] block text-sm">1. Crea con IA</strong>
+            <p class="text-[#FAF4E8]/80 leading-relaxed">
+              Solicita a ChatGPT o Claude una calculadora financiera o generador útil en un único archivo <code class="text-[#F5E6C8] bg-[#0B0B0C] px-1 py-0.5 rounded">index.html</code>.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-[#18181B] border border-[#F5E6C8]/10 space-y-2">
+            <strong class="text-[#D4AF37] block text-sm">2. Sube a Netlify Gratis</strong>
+            <p class="text-[#FAF4E8]/80 leading-relaxed">
+              Ingresa a <strong>app.netlify.com/drop</strong> y arrastra la carpeta con tu archivo HTML. Obtendrás una URL con HTTPS de inmediato.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-[#18181B] border border-[#F5E6C8]/10 space-y-2">
+            <strong class="text-[#D4AF37] block text-sm">3. Monetiza con Adsterra</strong>
+            <p class="text-[#FAF4E8]/80 leading-relaxed">
+              Registra tu URL en Adsterra, copia el script del <strong>Social Bar</strong> o <strong>Popunder</strong> y pégalo justo antes de la etiqueta <code class="text-[#F5E6C8] bg-[#0B0B0C] px-1 py-0.5 rounded">&lt;/body&gt;</code>.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#F5E6C8] text-[#0B0B0C] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="font-bold text-sm">¿Aún no tienes cuenta de Publisher?</div>
+            <div class="text-xs text-[#0B0B0C]/80">Únete a través de nuestro enlace oficial para recibir soporte prioritario.</div>
+          </div>
+          <a href="https://beta.publishers.adsterra.com/referral/ncrkTJPDRx" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-[#0B0B0C] text-[#FAF4E8] text-xs font-bold hover:bg-[#18181B] whitespace-nowrap transition-all">
+            Registrarme en Adsterra →
+          </a>
+        </div>
+      </div>
+
+      <!-- Modal 3: Calculadora de Metas Financieras -->
+      <div id="modal-goals" class="hidden space-y-6">
+        <div class="flex justify-between items-center border-b border-[#F5E6C8]/12 pb-4">
+          <h3 class="text-xl font-semibold text-[#F5E6C8]">Calculadora de Metas Financieras USD</h3>
+          <button onclick="closeModal()" class="px-3 py-1 rounded-lg bg-[#18181B] text-xs text-[#FAF4E8]/70 hover:text-white">Cerrar ✕</button>
+        </div>
+
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs">
+              <span>Meta Mensual deseada en Dólares:</span>
+              <strong id="goal-target-txt" class="font-mono-num text-[#D4AF37] font-bold">$600 USD/mes</strong>
+            </div>
+            <input id="goal-target" type="range" min="100" max="5000" step="50" value="600" oninput="calcGoals()" class="w-full ios-slider" />
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs">
+              <span>Cantidad de Webs IA publicadas en Netlify/Vercel:</span>
+              <strong id="goal-webs-txt" class="font-mono-num text-[#F5E6C8] font-bold">3 sitios web</strong>
+            </div>
+            <input id="goal-webs" type="range" min="1" max="10" step="1" value="3" oninput="calcGoals()" class="w-full ios-slider" />
+          </div>
+
+          <div class="p-6 rounded-2xl bg-gradient-to-br from-[#FAF4E8] to-[#F5E6C8] text-[#0B0B0C] space-y-2 shadow-xl">
+            <div class="text-xs font-semibold text-[#0B0B0C]/70">Tráfico diario necesario por cada sitio web (CPM estimado $4.50):</div>
+            <div class="text-3xl sm:text-4xl font-extrabold font-mono-num">
+              <span id="goal-result">1,481</span> <span class="text-base font-medium">visitas / día por web</span>
+            </div>
+            <div class="text-xs text-[#0B0B0C]/80 pt-2 border-t border-[#0B0B0C]/10">
+              💡 Con la red de apoyo mutuo y publicaciones en redes, requerirás aproximadamente 15 min diarios de interacción cruzada.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* State Variables */
+    let visitsToday = 1642;
+    let points = 120;
+    
+    // Community Directory Initial Data
+    const sites = [
+      { id: 1, title: 'FinanzasClaras AI — Hipotecas US & España', url: 'https://finanzas-claras.netlify.app', visits: 342 },
+      { id: 2, title: 'PromptCraft Studio — Generador SEO', url: 'https://promptcraft-ai.vercel.app', visits: 289 },
+      { id: 3, title: 'BioRitmo — Calculadora de Macros Fitness', url: 'https://bioritmo-vital.netlify.app', visits: 215 },
+      { id: 4, title: 'FreelanceTax US & Spain Estimator', url: 'https://freelance-tax-calc.netlify.app', visits: 198 }
+    ];
+
+    let scene, camera, renderer, current3DGroup;
+    let globeMesh, coinMesh, particlesMesh;
+    let current3DMode = 'globe';
+
+    function init3D() {
+      const container = document.getElementById('three-container');
+      if (!container) return;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.z = 6;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const pointLight1 = new THREE.PointLight(0xD4AF37, 2, 50);
+      pointLight1.position.set(5, 5, 5);
+      scene.add(pointLight1);
+
+      const pointLight2 = new THREE.PointLight(0x10B981, 1.5, 50);
+      pointLight2.position.set(-5, -5, -2);
+      scene.add(pointLight2);
+
+      current3DGroup = new THREE.Group();
+      scene.add(current3DGroup);
+
+      // Build 3D Objects
+      createGlobe();
+      createCoin();
+      createParticles();
+
+      coinMesh.visible = false;
+
+      // Mouse drag rotation
+      let isDragging = false;
+      let previousMousePosition = { x: 0, y: 0 };
+
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - previousMousePosition.x;
+        const deltaY = e.clientY - previousMousePosition.y;
+
+        current3DGroup.rotation.y += deltaX * 0.008;
+        current3DGroup.rotation.x += deltaY * 0.008;
+
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      // Window resize
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+
+      animate3D();
+    }
+
+    function createGlobe() {
+      const geometry = new THREE.IcosahedronGeometry(1.8, 4);
+      const material = new THREE.MeshPhongMaterial({
+        color: 0x121214,
+        emissive: 0x0B0B0C,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.85
+      });
+      globeMesh = new THREE.Mesh(geometry, material);
+
+      // Gold pins / nodes
+      const nodeGeo = new THREE.SphereGeometry(0.04, 8, 8);
+      const nodeMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37 });
+      for (let i = 0; i < 40; i++) {
+        const pin = new THREE.Mesh(nodeGeo, nodeMat);
+        const phi = Math.acos(-1 + (2 * i) / 40);
+        const theta = Math.sqrt(40 * Math.PI) * phi;
+        pin.position.setFromSphericalCoords(1.82, phi, theta);
+        globeMesh.add(pin);
+      }
+
+      current3DGroup.add(globeMesh);
+    }
+
+    function createCoin() {
+      const geometry = new THREE.CylinderGeometry(1.5, 1.5, 0.2, 32);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xD4AF37,
+        metalness: 0.9,
+        roughness: 0.2
+      });
+      coinMesh = new THREE.Mesh(geometry, material);
+      coinMesh.rotation.x = Math.PI / 3;
+      current3DGroup.add(coinMesh);
+    }
+
+    function createParticles() {
+      const particleCount = 120;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 10;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.PointsMaterial({
+        color: 0xF5E6C8,
+        size: 0.04,
+        transparent: true,
+        opacity: 0.6
+      });
+
+      particlesMesh = new THREE.Points(geometry, material);
+      scene.add(particlesMesh);
+    }
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+
+      if (current3DGroup) {
+        current3DGroup.rotation.y += 0.003;
+      }
+      if (particlesMesh) {
+        particlesMesh.rotation.y -= 0.001;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function switch3D(mode) {
+      current3DMode = mode;
+      const btnGlobe = document.getElementById('btn-3d-globe');
+      const btnCoin = document.getElementById('btn-3d-coin');
+
+      if (mode === 'globe') {
+        globeMesh.visible = true;
+        coinMesh.visible = false;
+        btnGlobe.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-[#F5E6C8] text-[#0B0B0C] transition-all";
+        btnCoin.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-[#FAF4E8]/80 hover:text-white transition-all";
+      } else {
+        globeMesh.visible = false;
+        coinMesh.visible = true;
+        btnCoin.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-[#F5E6C8] text-[#0B0B0C] transition-all";
+        btnGlobe.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-[#FAF4E8]/80 hover:text-white transition-all";
+      }
+    }
+
+    function triggerWave() {
+      if (current3DGroup) {
+        current3DGroup.rotation.x += 0.8;
+        current3DGroup.rotation.y += 1.2;
+      }
+      visitsToday += 150;
+      document.getElementById('hero-live-visits').innerText = visitsToday.toLocaleString();
+    }
+
+    function setHeroMode(mode) {
+      const btnSolo = document.getElementById('btn-mode-solo');
+      const btnCom = document.getElementById('btn-mode-com');
+      const desc = document.getElementById('hero-mode-desc');
+
+      if (mode === 'solo') {
+        btnSolo.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#0B0B0C] text-[#FAF4E8] shadow transition-all";
+        btnCom.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#0B0B0C]/70 transition-all";
+        desc.innerText = "Modo Solitario: Dependes únicamente de tu tráfico directo sin ayuda mutua.";
+      } else {
+        btnCom.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#0B0B0C] text-[#FAF4E8] shadow transition-all";
+        btnSolo.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-[#0B0B0C]/70 transition-all";
+        desc.innerText = "Modo Comunidad: Cada visita que realizas retorna multiplicada desde múltiples países miembros.";
+      }
+    }
+
+    function showTab(num) {
+      [1, 2, 3].forEach(i => {
+        document.getElementById(`panel-${i}`).classList.add('hidden');
+        document.getElementById(`panel-${i}`).classList.remove('grid');
+        const tabBtn = document.getElementById(`tab-${i}`);
+        tabBtn.className = "px-4 py-2 rounded-xl text-xs font-semibold text-[#FAF4E8]/70 hover:text-white transition-all";
+      });
+
+      const activePanel = document.getElementById(`panel-${num}`);
+      activePanel.classList.remove('hidden');
+      activePanel.classList.add('grid');
+
+      const activeTabBtn = document.getElementById(`tab-${num}`);
+      activeTabBtn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-[#F5E6C8] text-[#0B0B0C] transition-all";
+    }
+
+    function calcCpm() {
+      const countrySelect = document.getElementById('calc-country');
+      const baseCpm = parseFloat(countrySelect.value);
+      const label = countrySelect.options[countrySelect.selectedIndex].getAttribute('data-label');
+
+      const formatMultiplier = parseFloat(document.getElementById('calc-format').value);
+      const visits = parseInt(document.getElementById('calc-vis').value);
+
+      document.getElementById('calc-vis-txt').innerText = visits.toLocaleString() + ' visitas / día';
+
+      const effectiveCpm = baseCpm * formatMultiplier;
+      const dailyEarn = (visits / 1000) * effectiveCpm;
+      const monthlyEarn = dailyEarn * 30;
+
+      document.getElementById('calc-monthly').innerText = monthlyEarn.toFixed(2);
+      document.getElementById('calc-daily').innerText = dailyEarn.toFixed(2);
+      document.getElementById('calc-eff-cpm').innerText = effectiveCpm.toFixed(2);
+      document.getElementById('calc-tier-txt').innerText = label;
+    }
+
+    function calcGoals() {
+      const targetUSD = parseInt(document.getElementById('goal-target').value);
+      const webs = parseInt(document.getElementById('goal-webs').value);
+
+      document.getElementById('goal-target-txt').innerText = `$${targetUSD.toLocaleString()} USD/mes`;
+      document.getElementById('goal-webs-txt').innerText = `${webs} ${webs === 1 ? 'sitio web' : 'sitios web'}`;
+
+      const dailyTargetTotal = targetUSD / 30;
+      const avgCpm = 4.50;
+      const totalDailyVisits = (dailyTargetTotal / avgCpm) * 1000;
+      const visitsPerWeb = Math.round(totalDailyVisits / webs);
+
+      document.getElementById('goal-result').innerText = visitsPerWeb.toLocaleString();
+    }
+
+    function openModal(type) {
+      const backdrop = document.getElementById('modal-backdrop');
+      ['guide', 'goals'].forEach(m => {
+        const modal = document.getElementById(`modal-${m}`);
+        if (modal) {
+          modal.classList.add('hidden');
+        }
+      });
+
+      const targetModal = document.getElementById(`modal-${type}`);
+      if (targetModal) {
+        targetModal.classList.remove('hidden');
+      }
+
+      if (backdrop) {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('flex');
+        setTimeout(() => {
+          backdrop.classList.remove('opacity-0');
+        }, 10);
+      }
+    }
+
+    function closeModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      if (!backdrop) return;
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+        backdrop.classList.remove('flex');
+      }, 300);
+    }
+
+    function renderWall() {
+      const container = document.getElementById('wall-list');
+      container.innerHTML = '';
+
+      sites.forEach(site => {
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-2xl bg-[#18181B] border border-[#F5E6C8]/15 flex flex-col justify-between space-y-3";
+        card.innerHTML = `
+          <div>
+            <div class="text-xs font-semibold text-[#F5E6C8] truncate">${site.title}</div>
+            <a href="${site.url}" target="_blank" class="text-[11px] text-[#10B981] hover:underline truncate block mt-0.5">${site.url}</a>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-[#F5E6C8]/10">
+            <span class="text-[#FAF4E8]/60 font-mono-num">${site.visits} visitas recibidas</span>
+            <button onclick="supportSite(${site.id}, '${site.url}')" class="px-3 py-1 rounded-lg bg-[#D4AF37] text-[#0B0B0C] text-[11px] font-bold hover:bg-[#F5E6C8] transition-all">
+              Visitar y Apoyar (+10 pts)
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function supportSite(id, url) {
+      points += 10;
+      document.getElementById('user-pts').innerText = points;
+
+      const site = sites.find(s => s.id === id);
+      if (site) site.visits += 1;
+
+      renderWall();
+      window.open(url, '_blank');
+    }
+
+    function submitSite(e) {
+      e.preventDefault();
+      const title = document.getElementById('in-title').value.trim();
+      const url = document.getElementById('in-url').value.trim();
+
+      if (!title || !url) return;
+
+      sites.unshift({
+        id: Date.now(),
+        title: title,
+        url: url,
+        visits: 1
+      });
+
+      document.getElementById('in-title').value = '';
+      document.getElementById('in-url').value = '';
+
+      renderWall();
+    }
+
+    function initTiltCards() {
+      const cards = document.querySelectorAll('.tilt-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          card.style.transform = `perspective(1000px) rotateX(${-y / 25}deg) rotateY(${x / 25}deg) scale3d(1.01, 1.01, 1.01)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init3D();
+      calcCpm();
+      calcGoals();
+      initTiltCards();
+
+      // Live visitor ticker simulation
+      setInterval(() => {
+        visitsToday += Math.floor(Math.random() * 3) + 1;
+        const liveEl = document.getElementById('hero-live-visits');
+        if (liveEl) liveEl.innerText = visitsToday.toLocaleString();
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
